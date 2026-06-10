@@ -1,0 +1,17 @@
+name: hello-s31 boot + counter
+version: 1
+author: Wokwi
+steps:
+  # Wait for "Tick: 1": by this point the LVGL banner is painted and the tick
+  # label has been stably showing "Tick: 0" for ~1 simulated second. Captures
+  # boot state without racing against the LVGL refresh cycle.
+  - wait-serial: "Tick: 1"
+  - take-screenshot:
+      part-id: lcd1
+      compare-with: screenshots/boot.png
+
+  # Same trick at Tick: 6 to capture a stable "Tick: 5" frame.
+  - wait-serial: "Tick: 6"
+  - take-screenshot:
+      part-id: lcd1
+      compare-with: screenshots/tick-5.png

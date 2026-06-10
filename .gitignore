@@ -1,0 +1,13 @@
+# ESP-IDF
+sdkconfig
+sdkconfig.old
+
+# Fetched by `idf.py reconfigure` from dependencies.lock.
+managed_components/
+
+# Ship only the combined UF2, as wokwi.toml points at it. Everything else under
+# build/ is intermediate and rebuilt by `idf.py --preview build`.
+build/*
+!build/uf2.bin
+
+*.swp

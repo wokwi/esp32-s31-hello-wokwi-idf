@@ -1,0 +1,41 @@
+name: wokwi
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  simulate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - name: Build with ESP-IDF
+        uses: espressif/esp-idf-ci-action@v1
+        with:
+          esp_idf_version: latest
+          target: esp32s31
+          path: '.'
+          command: 'idf.py --preview build && idf.py --preview uf2'
+      - name: Start Wokwi CI server
+        uses: wokwi/wokwi-ci-server-action@v1
+      - name: Run Wokwi Simulation
+        uses: wokwi/wokwi-ci-action@v1
+        with:
+          token: ${{ secrets.WOKWI_CLI_TOKEN }}
+          path: '.'
+          timeout: 30000
+          scenario: 'test.yaml'
+      - name: Upload firmware
+        uses: actions/upload-artifact@v7
+        with:
+          name: firmware
+          path: |
+            build/uf2.bin
+            build/hello-s31.elf
+            build/flasher_args.json
+      - name: Upload screenshots
+        if: always()
+        uses: actions/upload-artifact@v7
+        with:
+          name: screenshots
+          path: screenshots/
